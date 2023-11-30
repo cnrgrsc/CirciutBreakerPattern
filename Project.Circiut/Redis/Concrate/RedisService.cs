@@ -19,7 +19,7 @@ namespace Project.Circiut.Redis.Concrate
 			_logger = logger;
 			_redisConnection = ConnectionMultiplexer.Connect(redisConfig.Value.ConnectionString);
 			_circuitBreakerPolicy = CircuitPolicy.CreatePolicy(
-				exceptionsAllowedBeforeBreaking: 5,
+				exceptionsAllowedBeforeBreaking: 1,
 				durationOfBreak: TimeSpan.FromSeconds(30),
 				logger: _logger // ILogger nesnesini CreatePolicy'e geçiriyoruz.
 			);

@@ -40,7 +40,7 @@ builder.Services.AddSingleton<IElasticsearchService>(serviceProvider =>
 builder.Services.AddSingleton<AsyncCircuitBreakerPolicy>(serviceProvider =>
 {
 	var logger = serviceProvider.GetRequiredService<ILogger<SearchController>>();
-	return CircuitPolicy.CreatePolicy(5, TimeSpan.FromSeconds(30), logger);
+	return CircuitPolicy.CreatePolicy(1, TimeSpan.FromSeconds(30), logger);
 });
 
 var app = builder.Build();
