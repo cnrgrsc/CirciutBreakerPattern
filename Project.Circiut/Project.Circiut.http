@@ -1,0 +1,6 @@
+@Project.Circiut_HostAddress = http://localhost:5042
+
+GET {{Project.Circiut_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
