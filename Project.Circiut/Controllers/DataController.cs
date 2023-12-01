@@ -32,29 +32,29 @@ namespace Project.Circiut.Controllers
 			{
 				// Redis'e veri yazmayı dene
 				await _redisService.SetAsync(redisKey, data.ToJson());
-				return Ok(new { Message = "Data written to Redis" });
+				return Ok(new { Message = "Redis'e yazılan veriler" });
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError(ex, "Failed to write data to Redis, attempting to write to Elasticsearch.");
+				_logger.LogError(ex, "Redis'e veri yazılamadı, Elasticsearch'e yazılmaya çalışılıyor.");
 				try
 				{
 					// Redis'e yazma başarısız oldu, Elasticsearch'e yaz
 					var result = await _elasticsearchService.IndexDocumentAsync("products", data.Id.ToString(), data);
 					if (result)
 					{
-						return Ok(new { Message = "Data written to Elasticsearch" });
+						return Ok(new { Message = "Elasticsearch'e yazılan veriler" });
 					}
 					else
 					{
-						_logger.LogError("Failed to write data to Elasticsearch.");
+						_logger.LogError("Elasticsearch'e veri yazılamadı.");
 						return StatusCode(StatusCodes.Status503ServiceUnavailable, GetFallbackUtilities.GetFallbackResults());
 					}
 				}
 				catch (Exception exElastic)
 				{
 					// Elasticsearch'e yazma da başarısız oldu
-					_logger.LogError(exElastic, "Failed to write data to both Redis and Elasticsearch.");
+					_logger.LogError(exElastic, "Hem Redis hem de Elasticsearch'e veri yazılamadı.");
 					return StatusCode(StatusCodes.Status503ServiceUnavailable, GetFallbackUtilities.GetFallbackResults());
 				}
 			}

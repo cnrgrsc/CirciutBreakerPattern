@@ -37,12 +37,12 @@ namespace Project.Circiut.Controllers
 			catch(BrokenCircuitException bce)
 			{
 				// Redis Circuit Breaker açık ise bu bloğa girecek ve loglama yapılacak
-				_logger.LogWarning(bce, "Redis Circuit Breaker is open. Falling back to Elasticsearch for query: {Query}", query);
+				_logger.LogWarning(bce, "Redis Devre Kesici açık. Sorgu için Elasticsearch'e geri dönme: {Query}", query);
 			}
 			catch (Exception ex)
 			{
 				// Redis'te beklenmeyen bir hata oluştuğunda buraya düşer ve loglama yapılacak
-				_logger.LogError(ex, "An error occurred while accessing Redis for query: {Query}", query);
+				_logger.LogError(ex, "Sorgu için Redise erişilirken bir hata oluştu: {Query}", query);
 			}
 			try
 			{
@@ -53,9 +53,9 @@ namespace Project.Circiut.Controllers
 			catch (Exception ex)
 			{
 				// Elasticsearch'te beklenmeyen bir hata oluştuğunda buraya düşer ve loglama yapılacak
-				_logger.LogError(ex, "An error occurred while accessing Elasticsearch for query: {Query}", query);
+				_logger.LogError(ex, "Sorgu için Elasticsearch'e erişilirken bir hata oluştu: {Query}", query);
 				// Burada hata döndürmek yerine boş sonuç dönmeyi tercih edebilirsiniz.
-				return Ok(new { message = "An error occurred, and no results could be retrieved." });
+				return Ok(new { message = "Bir hata oluştu ve hiçbir sonuç alınamadı." });
 			}
 		}
 	}

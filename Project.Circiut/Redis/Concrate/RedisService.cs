@@ -16,13 +16,26 @@ namespace Project.Circiut.Redis.Concrate
 
 		public RedisService(IOptions<RedisConfig> redisConfig, ILogger<RedisService> logger)
 		{
+
 			_logger = logger;
-			_redisConnection = ConnectionMultiplexer.Connect(redisConfig.Value.ConnectionString);
+
+			// Circuit Breaker politikasını oluşturun
 			_circuitBreakerPolicy = CircuitPolicy.CreatePolicy(
 				exceptionsAllowedBeforeBreaking: 1,
 				durationOfBreak: TimeSpan.FromSeconds(30),
-				logger: _logger // ILogger nesnesini CreatePolicy'e geçiriyoruz.
+				logger: _logger
 			);
+
+			// Redis bağlanmayı dene ve hataları yakala
+			try
+			{
+				_redisConnection = ConnectionMultiplexer.Connect(redisConfig.Value.ConnectionString);
+			}
+			catch (RedisConnectionException ex)
+			{
+				_logger.LogError(ex, "İlk Redis bağlantısı başarısız oldu.");
+				// Redise yeniden bağlanmayı dene
+			}
 		}
 
 		public async Task<string> GetASync(string key)
